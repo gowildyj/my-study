@@ -1,0 +1,611 @@
+/* ========================================
+   My Study - Theory Learning
+   이론형 과목 공통 스타일
+======================================== */
+
+/* Layout */
+
+.theory-stack {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.theory-lesson-title {
+  margin-bottom: 20px;
+  font-size: 22px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.theory-card {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  overflow-wrap: anywhere;
+}
+
+.theory-card-title {
+  color: var(--primary);
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.theory-card[hidden],
+.theory-card [hidden] {
+  display: none !important;
+}
+
+.theory-pending {
+  opacity: 0.5;
+}
+
+/* Lecture navigation */
+
+a.theory-card {
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+@media (hover: hover) {
+  a.theory-card:hover {
+    border-color: var(--primary);
+    background: var(--background);
+  }
+}
+
+/* Tabs */
+
+.theory-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+
+  background: #eaf0f5;
+  border-radius: var(--radius);
+}
+
+.theory-tabs button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 4px;
+
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+
+  font-size: 14px;
+  font-weight: 600;
+  white-space: normal;
+  word-break: keep-all;
+}
+
+.theory-tabs button.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* Action buttons */
+
+.theory-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theory-actions > button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  white-space: normal;
+}
+
+.theory-stack > button {
+  min-height: 44px;
+}
+
+/* ========================================
+   Theory content
+======================================== */
+
+.theory-block-heading {
+  margin: 8px 0 0;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.theory-text {
+  font-size: inherit;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+
+.theory-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 22px;
+
+  line-height: 1.8;
+}
+
+.theory-list li::marker {
+  color: var(--primary);
+}
+
+.theory-important {
+  padding: 14px 16px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 8px;
+
+  font-weight: 600;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.theory-note {
+  padding: 14px 16px;
+
+  background: var(--background);
+  border-left: 3px solid var(--border);
+  border-radius: 4px;
+
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.theory-source {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+/* ========================================
+   Formula and code
+======================================== */
+
+.theory-formula {
+  margin: 0;
+  padding: 16px;
+
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  color: var(--primary);
+  font-family: ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.9;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.theory-code {
+  margin: 0;
+  padding: 16px;
+
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 8px;
+
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  line-height: 1.75;
+
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ========================================
+   Tables
+======================================== */
+
+.theory-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.theory-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.theory-table caption {
+  padding: 12px;
+
+  color: var(--muted);
+  font-size: 13px;
+  text-align: left;
+}
+
+.theory-table th,
+.theory-table td {
+  padding: 12px 10px;
+
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+
+  text-align: left;
+  vertical-align: middle;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.theory-table th {
+  background: var(--background);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.theory-table th:last-child,
+.theory-table td:last-child {
+  border-right: 0;
+}
+
+.theory-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ========================================
+   Figures and images
+======================================== */
+
+.theory-figure {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin: 0;
+  min-width: 0;
+}
+
+.theory-image {
+  display: block;
+
+  width: auto;
+  max-width: 100%;
+  height: auto;
+
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.theory-figure figcaption {
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ========================================
+   Worked examples
+======================================== */
+
+.theory-steps {
+  display: grid;
+  gap: 14px;
+}
+
+.theory-step {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.theory-step-number {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 50%;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.theory-step p {
+  padding-top: 2px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* ========================================
+   Concept memorization
+======================================== */
+
+.theory-term {
+  width: 100%;
+  min-height: 40px;
+  padding: 0;
+
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+
+  font-size: 19px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.theory-definition {
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.theory-reveal {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px;
+
+  background: var(--background);
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+/* ========================================
+   Exam settings
+======================================== */
+
+.theory-field {
+  display: grid;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.theory-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+
+  font: inherit;
+}
+
+.theory-fieldset {
+  display: grid;
+  gap: 12px;
+
+  min-width: 0;
+  margin: 0;
+  padding: 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.theory-fieldset legend {
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.theory-unit-select {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theory-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 44px;
+  padding: 8px;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.theory-check input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  accent-color: var(--primary);
+}
+
+/* ========================================
+   Exam questions
+======================================== */
+
+.theory-progress {
+  display: block;
+
+  width: 100%;
+  height: 8px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: 0;
+  border-radius: 100px;
+  background: var(--border);
+
+  overflow: hidden;
+}
+
+.theory-progress::-webkit-progress-bar {
+  background: var(--border);
+  border-radius: 100px;
+}
+
+.theory-progress::-webkit-progress-value {
+  background: var(--primary);
+  border-radius: 100px;
+}
+
+.theory-progress::-moz-progress-bar {
+  background: var(--primary);
+  border-radius: 100px;
+}
+
+/* Neutral before grading */
+
+.theory-option {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  font-size: inherit;
+  line-height: 1.7;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.theory-option.theory-selected:not(.correct):not(.wrong) {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Correct / incorrect */
+
+.theory-option.correct {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #15803d;
+}
+
+.theory-option.wrong {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.theory-option:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.theory-card .extra-question {
+  font-size: 17px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.theory-card .extra-feedback {
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.theory-year {
+  margin-top: 12px;
+  font-size: 18px;
+}
+
+/* ========================================
+   Exam result
+======================================== */
+
+.exam-result {
+  text-align: center;
+}
+
+.exam-score {
+  padding: 10px 0;
+
+  color: var(--primary);
+  font-size: 48px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 599px) {
+  .theory-card {
+    padding: 16px;
+  }
+
+  .theory-lesson-title {
+    font-size: 20px;
+  }
+
+  .theory-card-title {
+    font-size: 18px;
+  }
+
+  .theory-table th,
+  .theory-table td {
+    padding: 9px 8px;
+  }
+
+  .theory-tabs button {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 600px) {
+  .theory-card {
+    padding: 24px;
+  }
+
+  .theory-unit-select {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .theory-tabs button {
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .theory-image {
+    max-height: 560px;
+  }
+}
+
+@media (min-width: 900px) {
+  .theory-lesson-title {
+    font-size: 26px;
+  }
+
+  .theory-tabs {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
