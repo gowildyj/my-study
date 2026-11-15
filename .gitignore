@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# Private learning materials
+private/
+# Never commit raw learning files or local builds
+/private/
+/data/
+/audio/
+/dist/
+/vault.tmp-*/

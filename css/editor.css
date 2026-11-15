@@ -1,0 +1,320 @@
+/* ========================================
+   Editor layout
+======================================== */
+
+.editor-container,
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 20px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.editor-card[hidden] {
+  display: none;
+}
+
+.editor-card h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.editor-grid,
+.editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.editor-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.editor-hint,
+.editor-count {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ========================================
+   Form controls
+======================================== */
+
+.editor-container input:not([type="file"]),
+.editor-container select,
+.editor-container textarea {
+  width: 100%;
+  min-width: 0;
+
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+  font-size: 16px;
+}
+
+.editor-container input:focus,
+.editor-container textarea:focus,
+.editor-container select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+}
+
+.editor-container input[readonly] {
+  background: var(--background);
+}
+
+.editor-container textarea {
+  display: block;
+  resize: vertical;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   Buttons
+======================================== */
+
+.editor-button {
+  -webkit-appearance: none;
+  appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 10px 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  text-align: center;
+  cursor: pointer;
+}
+
+.editor-button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.editor-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.editor-import {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.import-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.import-button input {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  cursor: pointer;
+}
+
+.import-button:focus-within {
+  outline: 2px solid var(--primary);
+}
+
+/* ========================================
+   Status messages
+======================================== */
+
+.editor-status {
+  color: #15803d;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.editor-status:empty {
+  display: none;
+}
+
+.editor-status.error,
+.manual-message.error {
+  color: #b91c1c;
+}
+
+/* ========================================
+   Sentence preview
+======================================== */
+
+.preview-paragraph + .preview-paragraph {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border);
+}
+
+.preview-sentence {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 16px 0;
+}
+
+.preview-sentence + .preview-sentence {
+  border-top: 1px solid var(--border);
+}
+
+.preview-en {
+  font-size: 18px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.preview-ko {
+  font-size: 15px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+button.preview-word {
+  -webkit-appearance: none;
+  appearance: none;
+
+  display: inline;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  font: inherit;
+  font-weight: 600;
+  color: var(--primary);
+
+  cursor: pointer;
+}
+
+/* ========================================
+   Manual vocabulary linking
+======================================== */
+
+.manual-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-top: 8px;
+  padding: 14px;
+
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.manual-editor textarea {
+  min-height: 90px;
+}
+
+.manual-editor label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.manual-editor summary {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.manual-editor[open] > summary {
+  margin-bottom: 12px;
+}
+
+.manual-editor[open] > * + * {
+  margin-top: 10px;
+}
+
+.manual-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.manual-message {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.manual-action {
+  width: 100%;
+}
+
+/* ========================================
+   Responsive layout
+======================================== */
+
+@media (min-width: 900px) {
+  .editor-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .editor-form > :first-child,
+  .editor-form > :nth-child(4),
+  .editor-form > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .editor-card {
+    padding: 28px;
+  }
+
+  .editor-card textarea {
+    flex: 1;
+  }
+}

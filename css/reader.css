@@ -1,0 +1,91 @@
+:root { --sheet-bottom-padding: 180px; }
+/* View tabs */
+.tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; padding:4px; margin-bottom:16px; background:#edf1f5; border-radius:10px; }
+.extended-tabs { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.extended-tabs .tab-button { grid-column:span 2; }
+.extended-tabs .tab-button:nth-child(n+4) { grid-column:span 3; }
+.tab-button { min-height:44px; padding:8px 4px; border:0; border-radius:7px; background:transparent; color:var(--muted); font-size:14px; font-weight:600; }
+.tab-button.active { background:var(--primary); color:#fff; }
+/* Reading */
+.reader-card { padding:20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); }
+.reader-title { margin:6px 0 24px; font-size:24px; line-height:1.4; }
+.paragraph+.paragraph { margin-top:28px; }
+.paragraph-number { color:var(--primary); font-size:16px; font-weight:700; margin-bottom:8px; }
+.sentence+.sentence { margin-top:18px; }
+.sentence-en { font-size:18px; line-height:1.85; overflow-wrap:anywhere; }
+.sentence-ko { margin-top:5px; color:var(--muted); font-size:15px; line-height:1.75; overflow-wrap:anywhere; }
+/* Vocabulary */
+.reader-card.vocabulary-view { padding:0; border:0; background:transparent; }
+.vocabulary-section { display:flex; flex-direction:column; gap:16px; }
+.vocabulary-toolbar { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.vocabulary-control { min-height:44px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:14px; font-weight:600; }
+.vocabulary-control.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+.vocabulary-control:active { opacity:.8; }
+.vocabulary-control:disabled { opacity:.45; cursor:default; }
+.vocabulary-count { padding:0 2px; color:var(--muted); font-size:13px; }
+.vocabulary-list { padding:0 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); }
+.word-row { display:grid; grid-template-columns:24px minmax(0,1fr) 36px minmax(0,1fr); gap:8px; align-items:center; padding:12px 0; overflow-wrap:anywhere; }
+.word-row+.word-row { border-top:1px solid var(--border); }
+.word-number { color:#94a3b8; font-size:12px; font-variant-numeric:tabular-nums; }
+.word-en { color:var(--text); font-weight:600; font-size:17px; }
+.word-ko { color:var(--muted); font-size:15px; }
+.vocabulary-cell { display:flex; align-items:center; width:100%; min-width:0; min-height:40px; padding:8px; border:0; border-radius:6px; background:transparent; text-align:left; line-height:1.5; }
+button.vocabulary-cell { -webkit-appearance:none; appearance:none; cursor:pointer; }
+.vocabulary-cell-text { min-width:0; overflow-wrap:anywhere; }
+.vocabulary-cell.is-masked { background:#d1d5db; }
+.vocabulary-cell.is-masked .vocabulary-cell-text { visibility:hidden; user-select:none; }
+button.vocabulary-cell:active { background:var(--primary-light); }
+/* Linked vocabulary */
+button.word-link { -webkit-appearance:none; appearance:none; display:inline; margin:0; padding:0; border:0; border-radius:0; background:transparent; color:var(--primary); font:inherit; font-weight:600; text-align:inherit; vertical-align:baseline; cursor:pointer; }
+.word-link:active { background:var(--primary-light); border-radius:3px; }
+.word-highlight { color:var(--primary); font-weight:600; }
+@media (hover:hover) { .word-link:hover { text-decoration:underline; text-underline-offset:4px; } }
+/* Bottom sheet */
+dialog.word-sheet { position:fixed; inset:auto 0 0 0; width:100%; max-width:none; max-height:85vh; max-height:85dvh; margin:0; padding:0; border:0; border-radius:24px 24px 0 0; background:var(--surface); color:var(--text); overflow-y:auto; overscroll-behavior:contain; }
+dialog.word-sheet::backdrop { background:rgba(15,23,42,.45); }
+.sheet-content { padding:12px 24px var(--sheet-bottom-padding); padding-bottom:calc(var(--sheet-bottom-padding) + env(safe-area-inset-bottom,0px)); }
+.sheet-handle { width:36px; height:4px; margin:0 auto 16px; border-radius:999px; background:#cbd5e1; }
+.sheet-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px; }
+button.sheet-close { -webkit-appearance:none; appearance:none; display:grid; place-items:center; width:40px; height:40px; padding:0; border:0; border-radius:50%; background:var(--background); color:var(--muted); font-size:26px; line-height:1; cursor:pointer; flex-shrink:0; }
+.sheet-word { margin:0; color:var(--primary); font-size:30px; font-weight:700; line-height:1.4; overflow-wrap:anywhere; }
+.sheet-meaning { font-size:20px; font-weight:500; }
+.sheet-example { margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+.sheet-example-en { margin-top:8px; font-size:17px; line-height:1.8; }
+body:has(.word-sheet[open]) { overflow:hidden; }
+.word-sheet[open] { animation:sheet-open .2s ease-out; }
+@keyframes sheet-open { from { transform:translateY(100%); } to { transform:translateY(0); } }
+@media (prefers-reduced-motion:reduce) { .word-sheet[open] { animation:none; } }
+/* Verb and exercise views */
+.extra-stack { display:flex; flex-direction:column; gap:16px; min-width:0; }
+.extra-card { padding:20px; display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow-wrap:anywhere; }
+.extra-heading { font-size:22px; line-height:1.4; }
+.extra-verb-head { display:flex; align-items:center; gap:8px; }
+.extra-verb-title { font-size:22px; color:var(--primary); }
+.extra-meaning,.extra-summary { color:var(--muted); font-size:14px; }
+.extra-example { border-top:1px solid var(--border); padding-top:14px; }
+.extra-notes { background:var(--background); border-radius:8px; padding:12px; color:var(--primary);font-size:14px; }
+.extra-notes p+p { margin-top:5px; }
+.extra-switch { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px; }
+.extra-question { font-size:18px;line-height:1.55;white-space:pre-line; }
+.extra-choice,.extra-primary,.extra-retry { appearance:none;min-height:44px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);text-align:left;overflow-wrap:anywhere; }
+.extra-choice.correct { color:#166534;background:#dcfce7;border-color:#16a34a; }
+.extra-choice.wrong { color:#991b1b;background:#fee2e2;border-color:#dc2626; }
+.extra-choice:disabled { cursor:default;opacity:1; }
+.extra-input-label { display:flex;flex-direction:column;gap:8px;white-space:pre-line; }
+.extra-input { width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;resize:vertical; }
+.extra-input:disabled { background:var(--background);opacity:1; }
+.extra-primary { color:#fff;background:var(--primary);border-color:var(--primary);text-align:center;font-weight:600; }
+.extra-primary:disabled { opacity:.5; }
+.extra-retry { text-align:center;color:var(--muted);font-size:14px; }
+.extra-feedback { padding:12px;border-radius:8px;background:var(--background);white-space:pre-line; }
+.extra-feedback.correct { background:#dcfce7;color:#166534; }
+.extra-feedback.wrong { background:#fee2e2;color:#991b1b; }
+.extra-feedback p { margin-top:5px; }
+@media (min-width:600px) { .reader-card { padding:32px; } .vocabulary-toolbar { grid-template-columns:repeat(4,minmax(0,1fr));gap:12px; } .vocabulary-list { padding:0 24px; } .word-row { grid-template-columns:32px minmax(0,1fr) 36px minmax(0,1fr);gap:16px;padding:14px 0; } .word-en { font-size:18px; } .word-ko { font-size:16px; } .extended-tabs { grid-template-columns:repeat(5,minmax(0,1fr)); } .extended-tabs .tab-button,.extended-tabs .tab-button:nth-child(n+4) { grid-column:span 1; } .extra-card { padding:24px; } }
+@media (min-width:900px) { .reader-card { padding:40px; } .sentence-en { font-size:20px; } }
+
+/* Exercise translations: toggled without rebuilding questions. */
+.extra-translation { display:none; color:var(--muted); font-size:calc(15px + var(--reader-font-offset, 0px)); font-weight:400; line-height:1.65; white-space:pre-wrap; overflow-wrap:anywhere; }
+.show-translations .extra-translation { display:block; }
+.extra-choice .extra-translation { margin-top:4px; color:inherit; }
+.extra-translation-toggle { align-self:flex-end; }
