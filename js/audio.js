@@ -362,7 +362,7 @@ export function createUnitAudio(unit, container) {
 
   const header = element("div", "player-header");
 
-  const title = element("span", "player-title", tracks.length > 1 ? tracks[0].title : `${unit.unitLabel || "Unit"} ${unit.unit}`);
+  const title = element("span", "player-title", unit.audioTracks?.length && tracks.length ? tracks[0].title : `${unit.unitLabel || "Unit"} ${unit.unit}`);
 
   const close = button("player-close", "", "플레이어 닫기", closePlayer);
 
@@ -670,26 +670,32 @@ export function createUnitAudio(unit, container) {
   }
 
   let unitControl = unitButton;
-  if (tracks.length > 1) {
+  if (unit.audioTracks?.length && tracks.length) {
     const group = element("div", "audio-track-group");
-    const select = element("select", "audio-track-select");
-    select.setAttribute("aria-label", "회화 음원 선택");
+    const trackButtons = [];
+    function selectTrack(index) {
+      if (disposed || !tracks[index]) return;
+      if (index !== selectedTrack) {
+        pauseMedia(); audioLoading = null;
+        media.removeAttribute("src"); media.load();
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = null; selectedTrack = index; audioPath = tracks[index].src;
+        title.textContent = tracks[index].title || `회화 ${index + 1}`;
+        showError(); syncPlayer();
+      }
+      for (const [i, control] of trackButtons.entries()) {
+        control.setAttribute("aria-pressed", String(i === selectedTrack));
+      }
+      openPlayer();
+    }
     tracks.forEach((track, i) => {
-      const option = element("option", "", track.title || `회화 ${i + 1}`);
-      option.value = String(i); select.append(option);
+      const label = `${track.title || `회화 ${i + 1}`} 듣기`;
+      const control = button("unit-audio-button", "", label, () => selectTrack(i));
+      control.append(createIcon("headphones", 20), element("span", "", label));
+      control.setAttribute("aria-pressed", String(i === selectedTrack));
+      trackButtons.push(control); group.append(control);
     });
-    select.addEventListener("change", () => {
-      const index = Number(select.value);
-      if (!tracks[index] || index === selectedTrack) return;
-      pauseMedia(); audioLoading = null;
-      media.removeAttribute("src"); media.load();
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-      objectUrl = null; selectedTrack = index; audioPath = tracks[index].src;
-      title.textContent = tracks[index].title || `회화 ${index + 1}`;
-      showError(); syncPlayer();
-      if (!player.hidden) playMedia();
-    });
-    group.append(select, unitButton); unitControl = group;
+    unitControl = group;
   }
   return {
     unitButton: unitControl,

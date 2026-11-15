@@ -35,14 +35,49 @@ export function renderConversation(container,subject,unit) {
     sheet.replaceChildren(el('div','sheet-handle'),head,langText('p','sheet-meaning',word.ko,'ko'));
     if(word.pos||word.gender)sheet.append(el('p','muted',[word.pos,word.gender==='m'?'남성명사':word.gender==='f'?'여성명사':''].filter(Boolean).join(' · ')));
     if(word.note)sheet.append(el('p','sentence-ko',word.note));
-    if(line){const ex=el('div','sheet-example');ex.append(el('p','muted','회화 속 문장'),exampleRow({text:plainText(line.text),ko:line.ko}));sheet.append(ex);}
+    if(line){
+      const ex=el('div','sheet-example');
+      const en=langText('p','sheet-example-en','',language);
+      let cursor=0;
+      for(const match of line.text.matchAll(/\[\[([^|\]]+)\|([^\]]+)\]\]/g)){
+        en.append(document.createTextNode(line.text.slice(cursor,match.index)),match[1]===word.id?el('span','word-highlight',match[2]):document.createTextNode(match[2]));
+        cursor=match.index+match[0].length;
+      }
+      en.append(document.createTextNode(line.text.slice(cursor)));
+      const row=el('div','sentence-audio-row');row.append(en,audio.speakButton(plainText(line.text),'회화 문장 듣기'));
+      ex.append(el('p','muted','회화 속 문장'),row);
+      if(line.ko)ex.append(langText('p','sentence-ko',line.ko,'ko'));
+      sheet.append(ex);
+    }
     for(const ex of word.examples??[])sheet.append(exampleRow(ex));
     if(!dialog.open)dialog.showModal();
   }
   function exampleRow(ex){
     const row=el('div','extra-example');const line=el('div','sentence-audio-row');
-    line.append(langText('p','sentence-en',ex.text,language),audio.speakButton(ex.text,'문장 듣기'));row.append(line);
+    const text=langText('p','sentence-en','',language);
+    appendHighlights(text,ex.text,ex.highlights);
+    line.append(text,audio.speakButton(ex.text,'문장 듣기'));row.append(line);
     if(ex.ko)row.append(langText('p','sentence-ko',ex.ko,'ko'));return row;
+  }
+  function appendHighlights(target,text,highlights){
+    const phrases=[...new Set((Array.isArray(highlights)?highlights:[]).filter(v=>typeof v==='string'&&v.length))].sort((a,b)=>b.length-a.length);
+    if(!phrases.length){target.textContent=text;return;}
+    const ranges=[];
+    const letter=/[\p{L}\p{M}\p{N}]/u;
+    for(const phrase of phrases){
+      let from=0,index;
+      while((index=text.indexOf(phrase,from))!==-1){
+        const end=index+phrase.length;from=end;
+        if(letter.test(phrase[0])&&index>0&&letter.test(text[index-1]))continue;
+        if(letter.test(phrase.at(-1))&&end<text.length&&letter.test(text[end]))continue;
+        if(!ranges.some(r=>index<r.end&&end>r.start))ranges.push({start:index,end});
+      }
+    }
+    let cursor=0;
+    for(const {start,end} of ranges.sort((a,b)=>a.start-b.start)){
+      target.append(document.createTextNode(text.slice(cursor,start)),el('span','grammar-highlight',text.slice(start,end)));cursor=end;
+    }
+    target.append(document.createTextNode(text.slice(cursor)));
   }
   function appendMarked(target,line){
     let cursor=0;for(const match of line.text.matchAll(/\[\[([^|\]]+)\|([^\]]+)\]\]/g)){
@@ -52,8 +87,8 @@ export function renderConversation(container,subject,unit) {
     }target.append(document.createTextNode(line.text.slice(cursor)));
   }
   function dialogueView(){
-    const root=el('section','extra-stack dialogue-view');let translated=false;
-    const toggle=button('번역 보기','vocabulary-control',()=>{translated=!translated;root.classList.toggle('show-dialogue-ko',translated);toggle.textContent=translated?'번역 숨기기':'번역 보기';toggle.setAttribute('aria-pressed',String(translated));});toggle.setAttribute('aria-pressed','false');root.append(toggle);
+    const root=el('section','extra-stack dialogue-view');let translated=false;const translations=[];
+    const toggle=button('번역 보기','vocabulary-control',()=>{translated=!translated;for(const item of translations)item.hidden=!translated;toggle.textContent=translated?'번역 숨기기':'번역 보기';toggle.setAttribute('aria-pressed',String(translated));});toggle.setAttribute('aria-pressed','false');root.append(toggle);
     const speakers=new Map();
     for(const line of unit.dialogue??[]){
       if(!speakers.has(line.speaker))speakers.set(line.speaker,speakers.size%4);
@@ -61,7 +96,7 @@ export function renderConversation(container,subject,unit) {
       const bubble=el('div','dialogue-bubble');bubble.append(el('p','dialogue-speaker',line.speaker));
       const text=langText('p','sentence-en','',language);appendMarked(text,line);
       const en=el('div','sentence-audio-row');en.append(text,audio.speakButton(plainText(line.text),'회화 문장 듣기'));bubble.append(en);
-      if(line.ko)bubble.append(langText('p','sentence-ko dialogue-ko',line.ko,'ko'));
+      if(line.ko){const ko=langText('p','sentence-ko dialogue-ko',line.ko,'ko');ko.hidden=!translated;translations.push(ko);bubble.append(ko);}
       card.append(bubble);root.append(card);
     }if(!(unit.dialogue??[]).length)root.append(empty());return root;
   }

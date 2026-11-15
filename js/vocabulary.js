@@ -153,8 +153,8 @@ export function createVocabulary(words, audio, { language = "en", languageLabel 
      Individual word cell
   ======================================== */
 
-  function createCell(word, index, language) {
-    const isEnglish = language === "en";
+  function createCell(word, index, side) {
+    const isEnglish = side === "en";
 
     const hide = isEnglish ? state.hideEnglish : state.hideMeaning;
 
@@ -298,7 +298,7 @@ export function createVocabulary(words, audio, { language = "en", languageLabel 
      Initialize
   ======================================== */
 
-  section.append(toolbar, count, list, sequenceButton);
+  section.append(toolbar, sequenceButton, count, list);
 
   setListening(false);
 
