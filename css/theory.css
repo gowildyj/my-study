@@ -1,0 +1,28 @@
+.theory-stack { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.theory-tabs, .theory-toc { display: flex; flex-wrap: wrap; gap: .5rem; }
+.theory-tabs .active { background: var(--primary); color: white; }
+.theory-card, .theory-source-page { padding: 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); min-width: 0; }
+.theory-card { display: flex; flex-direction: column; gap: .75rem; }
+.theory-supplement { background: var(--primary-light); border-left: 4px solid var(--primary); padding: 1rem; border-radius: .5rem; }
+.theory-notice { padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: .5rem; color: var(--muted); }
+.theory-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.theory-formula, .theory-source-text { max-width: 100%; overflow-x: auto; padding: 1rem; background: var(--background); font: inherit; white-space: pre; }
+.theory-table-scroll { max-width: 100%; overflow-x: auto; }
+.theory-table { border-collapse: collapse; min-width: 100%; }
+.theory-table th, .theory-table td { padding: .7rem; text-align: left; vertical-align: top; border: 1px solid var(--border); min-width: 7rem; }
+.theory-table caption { text-align: left; font-weight: 600; margin-bottom: .5rem; }
+.theory-source-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.theory-figure { margin: 0; min-width: 0; }
+.theory-image-button { display: block; width: 100%; border: 0; background: var(--surface); padding: 0; cursor: zoom-in; }
+.theory-image-button img { display: block; max-width: 100%; height: auto; }
+.theory-figure figcaption { color: var(--muted); font-size: .85rem; }
+.theory-source-page summary { cursor: pointer; font-weight: 600; overflow-wrap: anywhere; }
+.theory-source-page[open] > summary { margin-bottom: 1rem; }
+.theory-source-page { scroll-margin-top: 5rem; }
+.theory-search { width: 100%; min-width: 0; padding: .8rem; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: .5rem; }
+.theory-image-dialog { width: 96vw; max-width: 1600px; max-height: 94dvh; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); }
+.theory-image-dialog::backdrop { background: #000b; }
+.theory-image-scroll { overflow: auto; max-height: 80dvh; margin-top: .75rem; }
+.theory-image-scroll img { display: block; max-width: none; height: auto; }
+.theory-stack [hidden] { display: none !important; }
+@media (max-width: 600px) { .theory-card, .theory-source-page { padding: .8rem; } .theory-tabs button { flex: 1 0 28%; } }

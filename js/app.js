@@ -1,4 +1,5 @@
 import {renderReader} from './reader.js';
+import {renderTheory} from './theory.js';
 import {renderConversation} from './conversation.js';
 import {unlock,lock,readJson} from './crypto.js';
 const app=document.querySelector('#app');const actions=document.querySelector('#study-actions');
@@ -36,7 +37,7 @@ async function router(){
   if(!match[2]){renderSubject(subject);return;}const number=Number(match[2]);if(number<1||number>subject.unitCount){renderMessage('존재하지 않는 단원입니다.',subject);return;}
   if(Array.isArray(subject.availableUnits)&&!subject.availableUnits.includes(number)){renderMessage('아직 등록된 학습 자료가 없습니다.',subject);return;}
   app.replaceChildren(el('p','empty-state','학습 자료를 불러오는 중입니다.'));const base=`data/${subject.id}/unit-${match[2]}`;
-  try{const [unit,extra]=await Promise.all([readJson(`${base}.json`),readJson(`${base}-extra.json`,true).catch(e=>({loadError:true}))]);if(!unlocked||version!==routeVersion)return;document.title=`${subject.name} ${subject.unitLabel||'Unit'} ${number} | My Study`;const render=subject.type==='conversation'?renderConversation:renderReader;disposeReader=render(app,subject,{...unit,language:unit.language??subject.language??'en',conjugations:extra?.conjugations??unit.conjugations,grammar:extra?.grammar??unit.grammar,expressions:extra?.expressions??unit.expressions,exerciseSource:extra?.exerciseSource??unit.exerciseSource,verbs:extra?.verbs??unit.verbs,exercises:extra?.exercises??unit.exercises,loadError:Boolean(extra?.loadError)});}catch(e){if(unlocked&&version===routeVersion)renderMessage(e.message==='HTTP 404'?'아직 등록된 학습 자료가 없습니다.':'학습 자료를 불러오지 못했습니다.',subject);}
+  try{const [unit,extra]=await Promise.all([readJson(`${base}.json`),readJson(`${base}-extra.json`,true).catch(e=>({loadError:true}))]);if(!unlocked||version!==routeVersion)return;document.title=`${subject.name} ${subject.unitLabel||'Unit'} ${number} | My Study`;const render=subject.type==='theory'?renderTheory:subject.type==='conversation'?renderConversation:renderReader;disposeReader=render(app,subject,{...unit,language:unit.language??subject.language??'en',conjugations:extra?.conjugations??unit.conjugations,grammar:extra?.grammar??unit.grammar,expressions:extra?.expressions??unit.expressions,exerciseSource:extra?.exerciseSource??unit.exerciseSource,verbs:extra?.verbs??unit.verbs,exercises:extra?.exercises??unit.exercises,loadError:Boolean(extra?.loadError)});}catch(e){if(unlocked&&version===routeVersion)renderMessage(e.message==='HTTP 404'?'아직 등록된 학습 자료가 없습니다.':'학습 자료를 불러오지 못했습니다.',subject);}
 }
 document.querySelector('#lock-button').addEventListener('click',()=>{unlocked=false;routeVersion++;lock();clearReader();subjects=[];document.querySelector('#settings-dialog')?.close();location.hash='#/';login();});window.addEventListener('hashchange',router);
 // Re-lock pages restored from the browser back/forward cache.
