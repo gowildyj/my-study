@@ -10,14 +10,14 @@ export function createVerbView(verbs,audio,error=false){
     if(verb.notes?.length){const notes=el('div','extra-notes');for(const note of verb.notes)notes.append(el('p','',note));card.append(notes);}root.append(card);
   }return root;
 }
-function normalize(value){return String(value??'').normalize('NFKC').trim().toLowerCase().replace(/\s+/g,' ').replace(/[.!?]+$/,'');}
+function normalize(value){return String(value??'').normalize('NFKC').trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ').replace(/[.!?]+$/,'');}
 function matches(value,accepted){return (Array.isArray(accepted)?accepted:[accepted]).some(answer=>normalize(value)===normalize(answer));}
-export function createExerciseView(exercises,error=false){
-  const root=el('section','extra-stack');if(!exercises||!['vocabulary','practice'].some(k=>exercises[k]?.length)){root.append(empty(error));return root;}
+export function createExerciseView(exercises,error=false,{language="en",categories=[["vocabulary","어휘 연습"],["practice","연습 문제"]]}={}){
+  const root=el('section','extra-stack');if(!exercises||!categories.some(([k])=>exercises[k]?.length)){root.append(empty(error));return root;}
   const tabs=el('div','extra-switch');const summary=el('p','extra-summary');summary.setAttribute('aria-live','polite');const list=el('div','extra-stack');const actions=el('div','extra-switch');
-  const state={vocabulary:new Map(),practice:new Map()};let category=exercises.vocabulary?.length?'vocabulary':'practice',wrongOnly=false,showTranslations=false;
+  const state=Object.fromEntries(categories.map(([k])=>[k,new Map()]));let category=categories.find(([k])=>exercises[k]?.length)[0],wrongOnly=false,showTranslations=false;
   function addTranslation(parent,value,tag='p'){if(typeof value!=='string'||!value.trim())return;const node=el(tag,'extra-translation',value);node.lang='ko';parent.append(node);}
-  const categories=[['vocabulary','어휘 연습'],['practice','연습 문제']];const buttons=new Map();
+  const buttons=new Map();
   for(const [key,label] of categories){if(!exercises[key]?.length)continue;const control=btn(label,'vocabulary-control',()=>{category=key;wrongOnly=false;render();});buttons.set(key,control);tabs.append(control);}
   const reset=btn('전체 다시 풀기','vocabulary-control',()=>{state[category].clear();wrongOnly=false;render();});const retry=btn('틀린 문제 다시 풀기','vocabulary-control',()=>{wrongOnly=true;render();});actions.append(reset,retry);
   const translationToggle=btn('번역 보기','vocabulary-control extra-translation-toggle',()=>{showTranslations=!showTranslations;root.classList.toggle('show-translations',showTranslations);translationToggle.textContent=showTranslations?'번역 숨기기':'번역 보기';translationToggle.setAttribute('aria-pressed',String(showTranslations));});
@@ -34,7 +34,7 @@ export function createExerciseView(exercises,error=false){
       for(const [i,option] of q.options.entries()){const control=btn(`${String.fromCharCode(65+i)}. ${option}`,'extra-choice',()=>submit(i,i===q.answer?'correct':'wrong'));addTranslation(control,q.optionsKo?.[i],'span');choices.push(control);body.append(control);}paintChoices();
     }else{
       const prompts=q.items?.length?q.items:['답안'];const inputs=[];
-      for(const [i,prompt] of prompts.entries()){const label=el('label','extra-input-label',prompt);const input=el(q.type==='manual'?'textarea':'input','extra-input');if(input.tagName==='INPUT'){input.type='text';input.autocomplete='off';}else input.rows=3;input.lang='en';input.spellcheck=false;input.value=record?.value?.[i]??'';addTranslation(label,q.itemsKo?.[i],'span');label.append(input);body.append(label);inputs.push(input);controls.push(input);}
+      for(const [i,prompt] of prompts.entries()){const label=el('label','extra-input-label',prompt);const input=el(q.type==='manual'?'textarea':'input','extra-input');if(input.tagName==='INPUT'){input.type='text';input.autocomplete='off';}else input.rows=3;input.lang=language;input.spellcheck=false;input.value=record?.value?.[i]??'';addTranslation(label,q.itemsKo?.[i],'span');label.append(input);body.append(label);inputs.push(input);controls.push(input);}
       const check=btn(q.type==='manual'?'모범 답안 보기':'정답 확인','extra-primary',()=>{const values=inputs.map(input=>input.value);if(q.type!=='manual'&&values.some(v=>!v.trim())){if(category==='vocabulary'){submit(values,'revealed');return;}feedback.hidden=false;feedback.className='extra-feedback';feedback.textContent='답안을 모두 입력해 주세요.';return;}let correct=false;if(q.type!=='manual'){if(q.distinct && new Set(values.map(normalize)).size!==values.length){correct=false;}else if(q.unordered){const remaining=[...(q.answers??[])];correct=values.length===remaining.length&&values.every(v=>{const i=remaining.findIndex(a=>matches(v,a));if(i<0)return false;remaining.splice(i,1);return true;});}else correct=values.length===(q.answers??[]).length&&values.every((v,i)=>matches(v,q.answers[i]));}submit(values,q.type==='manual'?'review':correct?'correct':'wrong');});controls.push(check);body.append(check);for(const control of controls)control.disabled=Boolean(record);
     }
     const again=btn('이 문제 다시 풀기','extra-retry',()=>{store.delete(index);card.replaceWith(renderQuestion(q,index));stats();});card.append(body,feedback,again);showFeedback();return card;

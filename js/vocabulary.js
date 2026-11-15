@@ -37,7 +37,7 @@ function shuffle(items) {
    Vocabulary study
 ======================================== */
 
-export function createVocabulary(words, audio) {
+export function createVocabulary(words, audio, { language = "en", languageLabel = "영어" } = {}) {
   const originalOrder = words.map((_, index) => index);
 
   const state = {
@@ -112,7 +112,7 @@ export function createVocabulary(words, audio) {
 
   /* 영어가리기 */
 
-  const englishButton = createControl("영어가리기", () => {
+  const englishButton = createControl(`${languageLabel}${languageLabel === "영어" ? "" : " "}가리기`, () => {
     state.hideEnglish = !state.hideEnglish;
 
     state.revealedEnglish.clear();
@@ -164,7 +164,7 @@ export function createVocabulary(words, audio) {
 
     const className = isEnglish ? "word-en" : "word-ko";
 
-    const label = isEnglish ? "영어 단어" : "한국어 뜻";
+    const label = isEnglish ? `${languageLabel} 단어` : "한국어 뜻";
 
     const cell = createElement(
       hide ? "button" : "span",
@@ -173,7 +173,8 @@ export function createVocabulary(words, audio) {
 
     const text = createElement("span", "vocabulary-cell-text", value);
 
-    text.lang = isEnglish ? "en" : "ko";
+    text.lang = isEnglish ? language : "ko";
+    if(isEnglish && word.gender) text.classList.add(`noun-${word.gender === "f" ? "f" : "m"}`);
 
     cell.append(text);
 
@@ -239,7 +240,7 @@ export function createVocabulary(words, audio) {
 
       const meaningCell = createCell(word, index, "ko");
 
-      const audioButton = audio.speakButton(word.en, "영어 단어 듣기");
+      const audioButton = audio.speakButton(word.en, `${languageLabel} 단어 듣기`);
 
       row.append(number, englishCell, audioButton, meaningCell);
 

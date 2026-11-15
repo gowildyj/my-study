@@ -1,4 +1,5 @@
 import {renderReader} from './reader.js';
+import {renderConversation} from './conversation.js';
 import {unlock,lock,readJson} from './crypto.js';
 const app=document.querySelector('#app');const actions=document.querySelector('#study-actions');
 let subjects=[],unlocked=false,routeVersion=0,disposeReader=null,category='전체';
@@ -24,7 +25,7 @@ function renderHome(){
 }
 function renderSubject(subject){
   document.title=`${subject.name} | My Study`;const grid=el('nav','unit-grid');grid.setAttribute('aria-label','단원 목록');
-  for(let i=1;i<=subject.unitCount;i++){const link=el('a','unit-card',`${subject.unitLabel||'Unit'} ${i}`);link.href=`#/${subject.id}/unit-${String(i).padStart(2,'0')}`;grid.append(link);}
+  for(let i=1;i<=subject.unitCount;i++){if(Array.isArray(subject.availableUnits)&&!subject.availableUnits.includes(i)){const pending=el('div','unit-card unit-pending',`${subject.unitLabel||'Unit'} ${i}`);pending.append(el('span','muted','준비 중'));grid.append(pending);continue;}const link=el('a','unit-card',`${subject.unitLabel||'Unit'} ${i}`);link.href=`#/${subject.id}/unit-${String(i).padStart(2,'0')}`;grid.append(link);}
   app.replaceChildren(backHeading(subject.name,'#/','학습 홈으로 돌아가기'),grid);
 }
 function renderMessage(message,subject){app.replaceChildren(backHeading(subject?.name||'My Study',subject?`#/${subject.id}`:'#/','돌아가기'),el('p','empty-state',message));}
@@ -33,8 +34,9 @@ async function router(){
   if(!location.hash||location.hash==='#/'||location.hash==='#'){renderHome();return;}
   const match=location.hash.slice(1).match(/^\/([a-z0-9-]+)(?:\/unit-(\d{2}))?$/);const subject=subjects.find(s=>s.id===match?.[1]);if(!subject){renderMessage('등록되지 않은 과목입니다.');return;}
   if(!match[2]){renderSubject(subject);return;}const number=Number(match[2]);if(number<1||number>subject.unitCount){renderMessage('존재하지 않는 단원입니다.',subject);return;}
+  if(Array.isArray(subject.availableUnits)&&!subject.availableUnits.includes(number)){renderMessage('아직 등록된 학습 자료가 없습니다.',subject);return;}
   app.replaceChildren(el('p','empty-state','학습 자료를 불러오는 중입니다.'));const base=`data/${subject.id}/unit-${match[2]}`;
-  try{const [unit,extra]=await Promise.all([readJson(`${base}.json`),readJson(`${base}-extra.json`,true).catch(e=>({loadError:true}))]);if(!unlocked||version!==routeVersion)return;document.title=`${subject.name} ${subject.unitLabel||'Unit'} ${number} | My Study`;disposeReader=renderReader(app,subject,{...unit,verbs:extra?.verbs??unit.verbs,exercises:extra?.exercises??unit.exercises,loadError:Boolean(extra?.loadError)});}catch(e){if(unlocked&&version===routeVersion)renderMessage(e.message==='HTTP 404'?'아직 등록된 학습 자료가 없습니다.':'학습 자료를 불러오지 못했습니다.',subject);}
+  try{const [unit,extra]=await Promise.all([readJson(`${base}.json`),readJson(`${base}-extra.json`,true).catch(e=>({loadError:true}))]);if(!unlocked||version!==routeVersion)return;document.title=`${subject.name} ${subject.unitLabel||'Unit'} ${number} | My Study`;const render=subject.type==='conversation'?renderConversation:renderReader;disposeReader=render(app,subject,{...unit,language:unit.language??subject.language??'en',conjugations:extra?.conjugations??unit.conjugations,grammar:extra?.grammar??unit.grammar,expressions:extra?.expressions??unit.expressions,exerciseSource:extra?.exerciseSource??unit.exerciseSource,verbs:extra?.verbs??unit.verbs,exercises:extra?.exercises??unit.exercises,loadError:Boolean(extra?.loadError)});}catch(e){if(unlocked&&version===routeVersion)renderMessage(e.message==='HTTP 404'?'아직 등록된 학습 자료가 없습니다.':'학습 자료를 불러오지 못했습니다.',subject);}
 }
 document.querySelector('#lock-button').addEventListener('click',()=>{unlocked=false;routeVersion++;lock();clearReader();subjects=[];document.querySelector('#settings-dialog')?.close();location.hash='#/';login();});window.addEventListener('hashchange',router);
 // Re-lock pages restored from the browser back/forward cache.

@@ -113,11 +113,12 @@ export function createUnitAudio(unit, container) {
   let objectUrl = null;
   let audioLoading = null;
 
-  const audioPath =
-    typeof unit.audio === "string" &&
-    /^audio\/[a-z0-9/_-]+\.mp3$/i.test(unit.audio)
-      ? unit.audio
-      : "";
+  const language = typeof unit.language === "string" ? unit.language : "en";
+  const tracks = (Array.isArray(unit.audioTracks) && unit.audioTracks.length
+    ? unit.audioTracks : [{src: unit.audio,title: "단원 전체 듣기"}])
+    .filter(t => typeof t?.src === "string" && /^audio\/[a-z0-9/_-]+\.mp3$/i.test(t.src));
+  let selectedTrack = 0;
+  let audioPath = tracks[0]?.src ?? "";
 
   /* ========================================
      English voice selection
@@ -134,15 +135,15 @@ export function createUnitAudio(unit, container) {
       (voice) => normalize(voice.lang) === target,
     );
 
-    const englishVoices = voices.filter((voice) =>
-      /^en(?:-|$)/i.test(normalize(voice.lang)),
+    const languageVoices = voices.filter((voice) =>
+      normalize(voice.lang).split("-")[0] === target.split("-")[0],
     );
 
     return (
       exactVoices.find((voice) => voice.default) ??
       exactVoices[0] ??
-      englishVoices.find((voice) => voice.default) ??
-      englishVoices[0] ??
+      languageVoices.find((voice) => voice.default) ??
+      languageVoices[0] ??
       null
     );
   }
@@ -224,7 +225,7 @@ export function createUnitAudio(unit, container) {
       finish();
       synth.cancel();
 
-      window.alert("영어 음성을 재생하지 못했습니다.");
+      window.alert("해당 언어의 음성을 재생하지 못했습니다. 기기의 음성 설정을 확인해 주세요.");
     }
 
     function next() {
@@ -238,9 +239,10 @@ export function createUnitAudio(unit, container) {
       try {
         const utterance = new SpeechSynthesisUtterance(queue[session.index]);
 
-        const voice = findVoice(preferences.accent);
+        const accent = /^en(?:-|$)/i.test(language) ? preferences.accent : language;
+        const voice = findVoice(accent);
 
-        utterance.lang = voice?.lang ?? preferences.accent;
+        utterance.lang = voice?.lang ?? accent;
 
         utterance.rate = preferences.ttsRate;
         utterance.pitch = 1;
@@ -306,7 +308,7 @@ export function createUnitAudio(unit, container) {
     startSpeech([text]);
   }
 
-  function speakButton(text, label = "영어 듣기") {
+  function speakButton(text, label = "발음 듣기") {
     const node = button("audio-icon-button", "", label, () => speak(text));
 
     node.title = label;
@@ -360,7 +362,7 @@ export function createUnitAudio(unit, container) {
 
   const header = element("div", "player-header");
 
-  const title = element("span", "player-title", `Unit ${unit.unit}`);
+  const title = element("span", "player-title", tracks.length > 1 ? tracks[0].title : `${unit.unitLabel || "Unit"} ${unit.unit}`);
 
   const close = button("player-close", "", "플레이어 닫기", closePlayer);
 
@@ -573,7 +575,8 @@ export function createUnitAudio(unit, container) {
       if (!media.getAttribute("src")) {
         showError("음원 잠금을 해제하는 중입니다…");
         if (!audioLoading) {
-          audioLoading = readProtected(audioPath).finally(() => { audioLoading = null; });
+          const pending = readProtected(audioPath).finally(() => { if (audioLoading === pending) audioLoading = null; });
+          audioLoading = pending;
         }
         const bytes = await audioLoading;
         if (disposed || version !== playVersion) return;
@@ -666,8 +669,30 @@ export function createUnitAudio(unit, container) {
     objectUrl = null;
   }
 
+  let unitControl = unitButton;
+  if (tracks.length > 1) {
+    const group = element("div", "audio-track-group");
+    const select = element("select", "audio-track-select");
+    select.setAttribute("aria-label", "회화 음원 선택");
+    tracks.forEach((track, i) => {
+      const option = element("option", "", track.title || `회화 ${i + 1}`);
+      option.value = String(i); select.append(option);
+    });
+    select.addEventListener("change", () => {
+      const index = Number(select.value);
+      if (!tracks[index] || index === selectedTrack) return;
+      pauseMedia(); audioLoading = null;
+      media.removeAttribute("src"); media.load();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      objectUrl = null; selectedTrack = index; audioPath = tracks[index].src;
+      title.textContent = tracks[index].title || `회화 ${index + 1}`;
+      showError(); syncPlayer();
+      if (!player.hidden) playMedia();
+    });
+    group.append(select, unitButton); unitControl = group;
+  }
   return {
-    unitButton,
+    unitButton: unitControl,
     player,
     speak,
     speakButton,
