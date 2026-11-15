@@ -25,3 +25,23 @@
 .audio-track-group { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr)); gap:8px; margin-bottom:16px; }
 .audio-track-group .unit-audio-button { margin:0; min-width:0; height:100%; }
 @media(max-width:480px){ .dialogue-bubble { max-width:92%; padding:10px 12px; } .conjugation-cell { padding:8px; } }
+
+
+/* Keep six-person forms in natural DOM order. Desktop still uses singular/plural columns. */
+@media (min-width: 600px) {
+  .conjugation-grid-six { grid-template-rows: repeat(3, auto); grid-auto-flow: column; }
+}
+@media (max-width: 599px) {
+  .conjugation-grid { grid-template-columns: minmax(0, 1fr); }
+  .conjugation-cell {
+    display: grid;
+    grid-template-columns: minmax(0, 76px) minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    padding: 8px 12px;
+  }
+  .conjugation-cell > .muted { overflow-wrap: anywhere; }
+  .conjugation-line { min-width: 0; gap: 4px; }
+  .conjugation-form { min-height: 44px; }
+  .conjugation-line > .audio-icon-button { width: 44px; height: 44px; }
+}

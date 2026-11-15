@@ -506,3 +506,29 @@ body:has(.word-sheet[open]) {
 .extra-translation-toggle {
   align-self: flex-end;
 }
+
+
+/* Mobile vocabulary: one content column, with number and audio in the margin. */
+@media (max-width: 599px) {
+  .vocabulary-list { padding: 0 12px; }
+  .word-row {
+    grid-template-columns: 24px minmax(0, 1fr) 44px;
+    grid-template-areas: "number word audio" "number meaning audio";
+    column-gap: 8px;
+    row-gap: 2px;
+    padding: 12px 0;
+    align-items: start;
+  }
+  .word-row > .word-number { grid-area: number; align-self: start; padding-top: 11px; }
+  .word-row > .word-en { grid-area: word; }
+  .word-row > .word-ko { grid-area: meaning; }
+  .word-row > .audio-icon-button {
+    grid-area: audio;
+    align-self: start;
+    width: 44px;
+    height: 44px;
+  }
+  .word-row > .vocabulary-cell { padding: 6px 2px; min-height: 34px; }
+  .word-row > button.vocabulary-cell { min-height: 44px; padding: 8px; }
+  .word-row .vocabulary-cell-text { overflow-wrap: anywhere; word-break: normal; }
+}

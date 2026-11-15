@@ -107,8 +107,9 @@ export function renderConversation(container,subject,unit) {
       const card=el('article','extra-card');const header=el('div','extra-verb-head');header.append(langText('h3','extra-verb-title',verb.verb,language),audio.speakButton(verb.verb,'동사원형 듣기'));card.append(header,el('p','extra-meaning',[verb.ko,verb.group?`${verb.group}군 동사`:''].filter(Boolean).join(' · ')));
       for(const tense of verb.tenses??[]){
         card.append(el('h4','conjugation-tense',tense.name));const grid=el('div','conjugation-grid');
-        const forms=tense.forms??[];const ordered=forms.length===6?[0,3,1,4,2,5].map(i=>forms[i]):forms;
-        for(const form of ordered){
+        const forms=tense.forms??[];
+        if(forms.length===6)grid.classList.add('conjugation-grid-six');
+        for(const form of forms){
           const cell=el('div','conjugation-cell');cell.append(langText('span','muted',form.person,language));
           const line=el('div','conjugation-line');const b=button('','conjugation-form',()=>{if(hidden){b.dataset.revealed=String(b.dataset.revealed!=='true');update();}else audio.speak(spoken);});b.lang=language;b.dataset.revealed='false';
           const spoken=`${form.person.endsWith('’')?form.person:form.person+' '}${form.form}`.replace('il/elle','il').replace('ils/elles','ils');
