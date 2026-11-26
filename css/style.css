@@ -329,3 +329,17 @@ button:focus-visible {
 .study-book h2 { font-size:20px; }
 .study-book:hover { border-color:var(--primary); }
 @media (max-width:390px) { .header-actions .editor-shortcut span { display:none; } .header-actions { gap:4px; } }
+
+
+/* 대학영어 기말고사 범위 */
+.unit-grid > a.unit-card:is(
+  [href="#/college-english/unit-02"],
+  [href="#/college-english/unit-04"],
+  [href="#/college-english/unit-07"],
+  [href="#/college-english/unit-09"],
+  [href="#/college-english/unit-11"],
+  [href="#/college-english/unit-13"]
+) {
+  border: 2px solid #1e40af;
+}
+
