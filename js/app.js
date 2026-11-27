@@ -1,4 +1,5 @@
 import { renderReader } from "./reader.js";
+import { renderGrammar } from './grammar.js';
 import { renderConversation } from "./conversation.js";
 import { renderTheory, renderTheorySubject } from "./theory.js";
 import { unlock, lock, readJson } from "./crypto.js";
@@ -263,6 +264,8 @@ function renderSubjectHome(subject) {
 
 function getUnitRenderer(subject) {
   switch (subject.type) {
+    case 'grammar':
+      return renderGrammar;
     case "theory":
       return renderTheory;
 
